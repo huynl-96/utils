@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { flattenArrayable, partition, range, toArray } from './array'
+import type { Arrayable, Nullable } from './types'
 
 describe('toArray', () => {
   it.each([
@@ -16,20 +17,31 @@ describe('toArray', () => {
   })
 })
 
-it('flattenArrayable', () => {
-  expect(flattenArrayable()).toEqual([])
-  expect(flattenArrayable([])).toEqual([])
-  expect(flattenArrayable(1)).toEqual([1])
-  expect(flattenArrayable([1, '2', 3])).toEqual([1, '2', 3])
-  expect(flattenArrayable([1, [1, 2]])).toEqual([1, 1, 2])
-  expect(flattenArrayable([1, [1, [2]]])).toEqual([1, 1, [2]])
+describe('flattenArrayable', () => {
+  it.each([
+    [undefined, []],
+    [null, []],
+    [1, [1]],
+    [[1, '2', 3], [1, '2', 3]],
+    [[1, [1, 2]], [1, 1, 2]],
+    [[1, [1, [2]]], [1, 1, [2]]],
+  ])('%s => %s', (input: Nullable<Arrayable<number | (number | string | number[])[]>>, expected) => {
+    expect(flattenArrayable(input)).toEqual(expected)
+  })
 })
 
-it('range', () => {
-  expect(range(0)).toEqual([])
-  expect(range(2)).toEqual([0, 1])
-  expect(range(2, 5)).toEqual([2, 3, 4])
-  expect(range(2, 10, 2)).toEqual([2, 4, 6, 8])
+describe('range', () => {
+  type Input = [number] | [number, number] | [number, number, number]
+  const cases: [Input, number[]][] = [
+    [[0], []],
+    [[2], [0, 1]],
+    [[2, 5], [2, 3, 4]],
+    [[2, 10, 2], [2, 4, 6, 8]],
+  ]
+
+  it.each(cases)('%s => %s', (input, expected) => {
+    expect(range(...input)).toEqual(expected)
+  })
 })
 
 it('partition', () => {

@@ -120,8 +120,8 @@ export function at<T>(array: readonly T[] | [], index: number): T | undefined {
  * @category Array
  */
 export function range(stop: number): number[]
-export function range(start: number, stop: number, step?: number): number[]
-export function range(...args: any): number[] {
+export function range(start: number, stop: number, step: number): number[]
+export function range(...args: number[]): number[] {
   let start: number, stop: number, step: number
 
   if (args.length === 1) {
